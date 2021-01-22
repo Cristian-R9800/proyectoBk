@@ -1,18 +1,5 @@
-import express from 'express'
-import morgan from 'morgan'
-import cors from 'cors'
+import app from './app'
+import './database';
 
-import testRoutes from './routes/test.routes'; 
-
-const app = express();
-
-//middleware
-app.use(cors());
-app.use(morgan('dev'));
-app.use(express.json());
-
-//routes
-
-app.use(testRoutes);
-
-app.listen(3000);
+app.listen(app.get('port'));
+console.log(`Listening on http://localhost:${app.get('port')}`);
