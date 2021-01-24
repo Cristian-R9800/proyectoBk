@@ -6,7 +6,7 @@ export interface IUser extends Document {
   lastname:string;
   code: string;
   birthdate: Date;
-  carreer:string;
+  degree:string;
   email: string;
   password: string;
 };
@@ -34,9 +34,9 @@ const userSchema = new Schema({
   },
   birthdate: {
     type: Date,
-    required: true
+    required: false
   },
-  carrerr: {
+  degree: {
     type: String,
     required: true
   },
