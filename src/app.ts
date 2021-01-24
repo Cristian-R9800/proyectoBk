@@ -9,7 +9,7 @@ import authRoutes from './routes/auth.routes';
 const app = express();
 
 // settings
-app.set('port', 3000);
+app.set('port', process.env.PORT || 3000);
 
 // middlewares
 app.use(morgan('dev'));

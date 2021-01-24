@@ -1,0 +1,8 @@
+{
+    "appService.zipIgnorePattern": [
+        "node_modules{,/**}",
+        ".vscode{,/**}"
+    ],
+    "appService.defaultWebAppToDeploy": "/subscriptions/97585caf-6a47-4f29-8e51-0515b48d7dc6/resourceGroups/Tesis/providers/Microsoft.Web/sites/backend-proyectonotas-Ak",
+    "appService.deploySubpath": "."
+}
