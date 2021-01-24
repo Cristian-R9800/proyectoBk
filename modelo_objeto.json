@@ -1,0 +1,28 @@
+{
+    "id_user": "123",
+    "name": "cristian",
+    "lastname": "ramirez",
+    "code": "1711157",
+    "birthdate": "2000-05-19",
+    "degree": "Ingenieria de Sistemas",
+    "email": "cristian-ramirez1@upc.edu.co",
+    "password": "123",
+    "location": {
+        "latitud": "4.6381",
+        "longitud": "-74.19"
+    },
+    "Id_rol": "1",
+    "subject": [{
+        "code_subject": "1",
+        "name": "Calculo",
+        "period": "2020-1-1",
+        "active":  true,
+        "grades": [{
+            "id_grade": "1",
+            "name": "Parcial 1",
+            "grade_value": "45",
+            "date": "2020-02-1"
+        }]
+
+    }]
+}

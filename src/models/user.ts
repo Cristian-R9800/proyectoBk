@@ -1,14 +1,36 @@
-import { model, Schema, Document } from "mongoose";
+import { model, Schema, Document, Types } from "mongoose";
 import bcrypt from "bcrypt";
 
 export interface IUser extends Document {
-  name:string;
-  lastname:string;
   code: string;
+  name: string;
+  lastname: string;
   birthdate: Date;
-  degree:string;
+  degree: string;
   email: string;
   password: string;
+  id_rol: string;
+  location: {
+    latitud: number;
+    longitud: number;
+  };
+  subjects: [
+    {
+      code_subject: string;
+      name: string;
+      period: string;
+      active: boolean;
+      grades: [
+        {
+          id_grade: string;
+          name: string;
+          grade_value: number;
+          date: Date;
+        }
+      ]
+    }
+  ]
+
 };
 
 const userSchema = new Schema({
@@ -19,31 +41,33 @@ const userSchema = new Schema({
     lowercase: true,
     trim: true
   },
-  name: {
-    type: String,
-    required: true
+  name: { type: String, required: true },
+  lastname: { type: String, required: true },
+  code: { type: String, required: true, unique: true },
+  birthdate: { type: Date, required: false },
+  degree: { type: String, required: true },
+  password: { type: String, required: true },
+  id_rol: { type: Number, required: true },
+  location: {
+    latitud: Number,
+    longitud: Number
   },
-  lastname: {
-    type: String,
-    required: true
-  },
-  code: {
-    type: String,
-    required: true,
-    unique: true
-  },
-  birthdate: {
-    type: Date,
-    required: false
-  },
-  degree: {
-    type: String,
-    required: true
-  },
-  password:{
-    type: String,
-    required: true
-  }
+  subjects: [{
+
+    code_subject: String,
+    name: String,
+    period: String,
+    active: Boolean,
+    grades: [
+      {
+        id_grade: String,
+        name: String,
+        grade_value: Number,
+        date: Date,
+      }
+    ]
+  }]
+
 });
 
 

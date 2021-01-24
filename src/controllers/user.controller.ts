@@ -1,4 +1,5 @@
 import { Request, Response } from "express";
+import { updateLocation} from "../services/geolocation.services";
 import User, { IUser } from "../models/user";
 import jwt from "jsonwebtoken";
 import config from "../config/config";
@@ -16,6 +17,7 @@ export const signUp = async (
   }
 
   const user = await User.findOne({ email: req.body.email });
+  
   if (user) {
     return res.status(400).json({ msg: "The User already Exists" });
   }
@@ -74,6 +76,21 @@ export const deleteUser = async(
 };
 
 
+export const updateLocationUser = async (
+  req: Request,
+  res: Response
+): Promise<Response> => {
+  if (!req.body.code || !req.body.latitud || !req.body.longitud) {
+    return res
+      .status(400)
+      .json({ msg: "Please. Send your code and full location" });
+  }
+  updateLocation(req.body.code, req.body.latitud, req.body.longitud);
+  console.log("endUpdateLocation")
+  return res.status(200).json({msg:"Updated complete"})
+};
+
+
 export const signIn = async (
   req: Request,
   res: Response
@@ -98,3 +115,5 @@ export const signIn = async (
     msg: "The email or password are incorrect"
   });
 };
+
+
