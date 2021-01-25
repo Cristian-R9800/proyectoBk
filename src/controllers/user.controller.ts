@@ -1,4 +1,4 @@
-  import { Request, Response } from "express";
+import { Request, Response } from "express";
 import { updateLocation } from "../services/geolocation.services";
 import User, { IUser } from "../models/user";
 
@@ -25,6 +25,9 @@ export const signUp = async (
   await newUser.save();
   return res.status(201).json(newUser);
 };
+
+
+
 
 export const getUser = async (
   req: Request,
@@ -74,6 +77,20 @@ export const deleteUser = async (
   return res.status(201).json({ msg: "Dato eliminado" });
 };
 
+export const getUserSubjects = async (
+  req: Request,
+  res: Response
+): Promise<Response> => {
+  const { code } = req.params;
+  if (!req.params.code) {
+    return res.status(400).json({ msg: "Please. Send Code from Student" })
+  }
+
+  const user = await User.findOne({ code: code }, { subjects: 1 });
+
+  return res.status(200).json(user);
+};
+
 
 
 export const signIn = async (
@@ -87,7 +104,7 @@ export const signIn = async (
       .json({ msg: "Please. Send your email and password" });
   }
 
-  const user = await User.findOne({ email: req.body.email },{subjects: 0, location: 0});
+  const user = await User.findOne({ email: req.body.email }, { subjects: 0, location: 0 });
   if (!user) {
     return res.status(400).json({ msg: "The User does not exists" });
   }

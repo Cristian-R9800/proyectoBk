@@ -2,6 +2,7 @@ import {Router} from 'express'
 import {
   deleteUser,
   getUser,
+  getUserSubjects,
   signIn,
   signUp,
   updateUser,
@@ -14,6 +15,6 @@ router.get('/perfil/usuario', getUser);
 router.put('/perfil/usuario', updateUser);
 router.delete('/perfil/usuario', deleteUser);
 router.post('/perfil/usuario/signin', signIn);
-
+router.get('/perfil/subjects/:code',getUserSubjects);
 
 export default router;

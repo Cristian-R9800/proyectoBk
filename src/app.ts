@@ -5,6 +5,7 @@ import morgan from 'morgan';
 
 import authRoutes from './routes/auth.routes';
 import studentRoutes from "./routes/student.routes";
+import coursesRoutes from "./routes/courses.routes";
 
 
 const app = express();
@@ -26,6 +27,7 @@ app.get('/', (req, res) => {
 
 app.use(authRoutes);
 app.use(studentRoutes);
+app.use(coursesRoutes);
 
 
 export default app;

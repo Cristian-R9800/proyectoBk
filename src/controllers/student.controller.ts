@@ -75,7 +75,8 @@ const avgTotal = async (subjects: string, code:string): Promise<number> => {
 
     await dataJson.forEach(async (element: { code_subject: string; }) => {
 
-        const user = await User.findOne({ code: code }, { subjects: { $elemMatch: { code_subject: element.code_subject } } });
+        const user = await User.find({ code: code }, { subjects: { $elemMatch: { code_subject: element.code_subject } } });
+        console.log(user)
         let result = averageSubject(user.subjects[0].grades);
         
         average += result;
