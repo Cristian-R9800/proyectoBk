@@ -21,6 +21,7 @@ export const signUp = async (
     return res.status(400).json({ msg: "The User already Exists" });
   }
 
+  
   const newUser = new User(req.body);
   await newUser.save();
   return res.status(201).json(newUser);
@@ -88,7 +89,7 @@ export const getUserSubjects = async (
 
   const user = await User.findOne({ code: code }, { subjects: 1 });
 
-  return res.status(200).json(user);
+  return res.status(200).json(user.subjects);
 };
 
 
@@ -123,6 +124,21 @@ export const signIn = async (
 
 
   return res.status(200).json(user);
+};
+
+
+export const verify = async (
+  req: Request,
+  res: Response
+): Promise<Response> => {
+  const { code } = req.params;
+  if (!req.params.code) {
+    return res.status(400).json({ msg: "Please. Send Code from Student" })
+  }
+
+  const user = await User.findOne({ code: code }, { subjects: 1 });
+
+  return res.status(200).json(user.subjects);
 };
 
 

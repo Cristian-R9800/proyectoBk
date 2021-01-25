@@ -10,6 +10,7 @@ export const getSubjectStudents = async (
     if (!req.params.code_subject) {
         return res.status(400).json({ msg: "Please. Send Code from Student" })
     }
+    
     const user = await User.find({ subjects: { $elemMatch: { code_subject: code_subject } } }, { subjects: 0 })
     if (!user) {
         return res

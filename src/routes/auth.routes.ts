@@ -7,6 +7,7 @@ import {
   signUp,
   updateUser,
 } from '../controllers/user.controller';
+import { sendEmail } from '../services/notification.services';
 
 const router = Router();
 
@@ -16,5 +17,8 @@ router.put('/perfil/usuario', updateUser);
 router.delete('/perfil/usuario', deleteUser);
 router.post('/perfil/usuario/signin', signIn);
 router.get('/perfil/subjects/:code',getUserSubjects);
+
+//test
+
 
 export default router;
