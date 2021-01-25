@@ -1,8 +1,7 @@
-import { Request, Response } from "express";
-import { updateLocation} from "../services/geolocation.services";
+  import { Request, Response } from "express";
+import { updateLocation } from "../services/geolocation.services";
 import User, { IUser } from "../models/user";
-import jwt from "jsonwebtoken";
-import config from "../config/config";
+
 
 
 
@@ -17,7 +16,7 @@ export const signUp = async (
   }
 
   const user = await User.findOne({ email: req.body.email });
-  
+
   if (user) {
     return res.status(400).json({ msg: "The User already Exists" });
   }
@@ -27,15 +26,15 @@ export const signUp = async (
   return res.status(201).json(newUser);
 };
 
-export const getUser = async(
-  req:Request,
-  res:Response
-):Promise<Response> =>{
-  if(!req.body.code){
-    return res.status(400).json({msg:"Please. Send Code from Student"})
+export const getUser = async (
+  req: Request,
+  res: Response
+): Promise<Response> => {
+  if (!req.body.code) {
+    return res.status(400).json({ msg: "Please. Send Code from Student" })
   }
-  const user = await User.findOne({code:req.body.code })
-  if(!user){
+  const user = await User.findOne({ code: req.body.code })
+  if (!user) {
     return res.status(400).json({ msg: "The User does not exists" });
   }
 
@@ -43,77 +42,71 @@ export const getUser = async(
 };
 
 
-export const updateUser = async(
-  req:Request,
-  res:Response
-): Promise<Response> =>{
-
-  if(!req.body.code){
-    return res.status(400).json({msg:"Please. Send Code from Student"})
-  }  
-  const {code} = req.body;
-  const  user = await User.findOne({code:req.body.code })
-  
-  if(!user){
-    return res.status(400).json({ msg: "The User does not exists" });
-  }
-
-  await User.updateOne({code:code},req.body)
-
-  return res.status(201).json(req.body);
-};
-export const deleteUser = async(
-  req:Request,
-  res:Response
-): Promise<Response> =>{
-  const {code} = req.body;
-  if(!req.body.code){
-    return res.status(400).json({msg:"Please. Send Code from Student"})
-  }
-  await User.remove({code: code});
-
-  return res.status(201).json({msg:"Dato eliminado"});
-};
-
-
-export const updateLocationUser = async (
+export const updateUser = async (
   req: Request,
   res: Response
 ): Promise<Response> => {
-  if (!req.body.code || !req.body.latitud || !req.body.longitud) {
-    return res
-      .status(400)
-      .json({ msg: "Please. Send your code and full location" });
+
+  if (!req.body.code) {
+    return res.status(400).json({ msg: "Please. Send Code from Student" })
   }
-  updateLocation(req.body.code, req.body.latitud, req.body.longitud);
-  console.log("endUpdateLocation")
-  return res.status(200).json({msg:"Updated complete"})
+  const { code } = req.body;
+  const user = await User.findOne({ code: req.body.code })
+
+  if (!user) {
+    return res.status(400).json({ msg: "The User does not exists" });
+  }
+
+  await User.updateOne({ code: code }, req.body)
+
+  return res.status(201).json(req.body);
 };
+export const deleteUser = async (
+  req: Request,
+  res: Response
+): Promise<Response> => {
+  const { code } = req.body;
+  if (!req.body.code) {
+    return res.status(400).json({ msg: "Please. Send Code from Student" })
+  }
+  await User.deleteOne({ code: code });
+
+  return res.status(201).json({ msg: "Dato eliminado" });
+};
+
 
 
 export const signIn = async (
   req: Request,
   res: Response
 ): Promise<Response> => {
+
   if (!req.body.email || !req.body.password) {
     return res
       .status(400)
       .json({ msg: "Please. Send your email and password" });
   }
 
-  const user = await User.findOne({ email: req.body.email });
+  const user = await User.findOne({ email: req.body.email },{subjects: 0, location: 0});
   if (!user) {
     return res.status(400).json({ msg: "The User does not exists" });
   }
 
-  const isMatch = await user.comparePassword(req.body.password);
-  if (isMatch) {
-    return res.status(400).json({ token: "sasdd" });
+  if (user.email != req.body.email || user.password != req.body.password) {
+    return res.status(400).json({ msg: "ERROR PASSWORD OR EMAIL INVALID" });
   }
 
-  return res.status(400).json({
-    msg: "The email or password are incorrect"
-  });
+  if (!req.body.latitud || !req.body.longitud) {
+    return res
+      .status(400)
+      .json({ msg: "Please. Send your full location" });
+  }
+
+  updateLocation(user.code, req.body.latitud, req.body.longitud);
+
+
+  return res.status(200).json(user);
 };
+
 
 

@@ -4,6 +4,7 @@ import cors from 'cors';
 import morgan from 'morgan';
 
 import authRoutes from './routes/auth.routes';
+import studentRoutes from "./routes/student.routes";
 
 
 const app = express();
@@ -24,6 +25,7 @@ app.get('/', (req, res) => {
 })
 
 app.use(authRoutes);
+app.use(studentRoutes);
 
 
 export default app;

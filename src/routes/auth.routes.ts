@@ -4,7 +4,6 @@ import {
   getUser,
   signIn,
   signUp,
-  updateLocationUser,
   updateUser,
 } from '../controllers/user.controller';
 
@@ -14,12 +13,7 @@ router.post('/perfil/usuario', signUp);
 router.get('/perfil/usuario', getUser);
 router.put('/perfil/usuario', updateUser);
 router.delete('/perfil/usuario', deleteUser);
-router.post('/perfil/usuario/location', updateLocationUser);
+router.post('/perfil/usuario/signin', signIn);
 
-
-//
-
-
-router.post('/signin', signIn);
 
 export default router;
