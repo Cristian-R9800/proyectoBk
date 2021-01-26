@@ -21,7 +21,7 @@ export const signUp = async (
     return res.status(400).json({ msg: "The User already Exists" });
   }
 
-  
+
   const newUser = new User(req.body);
   await newUser.save();
   return res.status(201).json(newUser);
@@ -120,10 +120,15 @@ export const signIn = async (
       .json({ msg: "Please. Send your full location" });
   }
 
-  updateLocation(user.code, req.body.latitud, req.body.longitud);
+  const stateBlocked:String = await updateLocation(user.code, req.body.latitud, req.body.longitud)
+  
+  if(stateBlocked == "BLOCKED"){
+    return res.status(400).json({msg: "LOGIN BLOCKED"})
+  }
+  else{
+    return res.status(200).json(user);
+  }
 
-
-  return res.status(200).json(user);
 };
 
 

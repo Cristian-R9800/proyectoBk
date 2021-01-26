@@ -20,19 +20,17 @@ export const updateLocation = async (
 
   const user = await User.findOne({ code: code });
 
-  verifyLocationRisk(user, newLocation)
+  if((verifyLocationRisk(user, newLocation))){
+    user.location = newLocation;
+    await user.save();
+    return "SUCCESS";
+  } else{
+    return "BLOCKED";
+  }
 
-
-
-  user.location = newLocation;
-
-  await user.save();
-
-
-  return "Code " + code + " location updated successfully";
 };
 
-function verifyLocationRisk(user: IUser, newlocation: location) {
+function verifyLocationRisk(user: IUser, newlocation: location):boolean {
   let data = JSON.stringify(user)
   let dataJson = JSON.parse(data);
 
@@ -46,7 +44,10 @@ function verifyLocationRisk(user: IUser, newlocation: location) {
       </ul>      
       `;
     sendEmail(user.email, htmlbody);
+    return false;
 
+  }else{
+    return true;
   }
 
 }
