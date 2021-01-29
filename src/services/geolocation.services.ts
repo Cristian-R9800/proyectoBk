@@ -1,3 +1,4 @@
+import { getbody } from "../assets/userRisk";
 import User, { IUser } from "../models/user";
 import { sendEmail } from "../services/notification.services";
 
@@ -36,14 +37,8 @@ function verifyLocationRisk(user: IUser, newlocation: location):boolean {
 
   if (Math.abs(user.location.latitud - newlocation.latitud) > 1
     || Math.abs(user.location.longitud - newlocation.longitud) > 1) {
-    const htmlbody = `
-      <h1> USER ${user.name} IN RISK actual login location is </h1> 
-      <ul>
-        <li>latitud: ${newlocation.latitud}</li>
-        <li>longitud: ${newlocation.longitud}</li>
-      </ul>      
-      `;
-    sendEmail(user.email, htmlbody);
+    const htmlbody = getbody(user.name,newlocation.latitud,newlocation.longitud);
+    sendEmail(user.email, htmlbody, "NOTIFICACION DE SEGURIDAD");
     return false;
 
   }else{

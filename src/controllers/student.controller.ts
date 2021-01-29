@@ -150,6 +150,33 @@ export const addSubject = async (
     return res.status(201).json({ msg: "Materia incluida correctamente" });
 };
 
+export const getAverageByPeriod = async (
+    req: Request,
+    res: Response
+): Promise<Response> => {
+    
+    const {code, period} = req.params;
+
+    if (!req.params.code || !req.params.code_subject) {
+            return res
+                .status(400)
+                .json({ msg: "Please. Send full data" });
+    }
+
+    const user = await User.find({ code: code }, { subjects: { $elemMatch: { period: period } } });
+
+
+    if (!user) {
+        return res
+        .status(400)
+        .json({ msg: "Dato no encontrado" });
+    }
+
+
+
+
+    return res.status(201).json({ msg: "Materia incluida correctamente" });
+};
 
 
 
@@ -167,6 +194,10 @@ const validateRequestSubject = (request: Request): string => {
         return "ERROR";
     return "SUCCESS";
 };
+
+
+
+
 
 const validateRequestGrade = (request: Request): string => {
 

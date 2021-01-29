@@ -14,6 +14,7 @@ router.post('/student/grade/:code/:code_subject', addGrade);
 router.get('/student/grade/average/:code/:code_subject', averageGrade);
 router.get('/student/grade/average/:code', averageTotal);
 router.get('/student/grade/:code/:code_subject', getGradesSubjectsbyCode);
+router.get('/student/grade/:code/:period', )
 
 
 export default router;

@@ -2,7 +2,8 @@ import config from '../config/config';
 import { Transporter, createTransport } from "nodemailer";
 export const sendEmail = async (
     mail: string,
-    body: string
+    body: string,
+    subject: string
 ): Promise<string> => {
 
     const { MAILUSER, MAILPSSWD } = config
@@ -10,7 +11,7 @@ export const sendEmail = async (
     const mailOptions = {
         from: MAILUSER,
         to: mail,
-        subject: "TEST",
+        subject: subject,
         html: body,
     }
     console.log(MAILUSER + " " + MAILPSSWD+ " "+ mail+ " " + body )

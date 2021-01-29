@@ -3,11 +3,12 @@ import {
   deleteUser,
   getUser,
   getUserSubjects,
+  sendSupport,
   signIn,
   signUp,
   updateUser,
 } from '../controllers/user.controller';
-import { sendEmail } from '../services/notification.services';
+
 
 const router = Router();
 
@@ -17,6 +18,8 @@ router.put('/perfil/usuario', updateUser);
 router.delete('/perfil/usuario', deleteUser);
 router.post('/perfil/usuario/signin', signIn);
 router.get('/perfil/subjects/:code',getUserSubjects);
+router.post('/perfil/sendEmail/', sendSupport);
+
 
 //test
 

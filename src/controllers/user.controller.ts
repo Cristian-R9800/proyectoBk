@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import { updateLocation } from "../services/geolocation.services";
 import User, { IUser } from "../models/user";
+import { sendEmail } from "../services/notification.services";
 
 
 
@@ -120,12 +121,12 @@ export const signIn = async (
       .json({ msg: "Please. Send your full location" });
   }
 
-  const stateBlocked:String = await updateLocation(user.code, req.body.latitud, req.body.longitud)
-  
-  if(stateBlocked == "BLOCKED"){
-    return res.status(400).json({msg: "LOGIN BLOCKED"})
+  const stateBlocked: String = await updateLocation(user.code, req.body.latitud, req.body.longitud)
+
+  if (stateBlocked == "BLOCKED") {
+    return res.status(400).json({ msg: "LOGIN BLOCKED" })
   }
-  else{
+  else {
     return res.status(200).json(user);
   }
 
@@ -146,5 +147,21 @@ export const verify = async (
   return res.status(200).json(user.subjects);
 };
 
+export const sendSupport = async (
+  req: Request,
+  res: Response
+): Promise<Response> => {
+  const { message,subject, email } = req.body;
+  if (!message || !subject || !email) {
+    return res.status(400).json({ msg: "Please. Send full data" })
+  }
 
+  await sendEmail(email, message, subject).catch(
+    () => {
+      return res.status(200).json({ msg: "Error en el envio del correo" });
+    }
+  );
+
+  return res.status(200).json({ msg: "Enviado correctamente" });
+};
 
