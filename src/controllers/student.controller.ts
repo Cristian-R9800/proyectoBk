@@ -15,7 +15,7 @@ export const addGrade = async (
     if (validateRequestGrade(req).match("ERROR")) {
         return res
             .status(400)
-            .json({ msg: "Please. Send full data" });
+            .json({ msg: "Please. Send full data for add grade" });
     }
 
     const user = await User.findOne({ code: req.params.code }, { subjects: { $elemMatch: { code_subject: req.params.code_subject } } });
@@ -31,21 +31,36 @@ export const averageGrade = async (
     res: Response
 ): Promise<Response> => {
 
+    console.log("INIT average Grade")
 
     if (!req.params.code || !req.body.code_subject) {
         return res
             .status(400)
-            .json({ msg: "Please. Send full data" });
+            .json({ msg: "Please. Send full data for averageGrade" });
     }
 
-    const user = await User.findOne({ code: req.params.code }, { subjects: { $elemMatch: { code_subject: req.params.code_subject } } });
+    const user: IUser = await User.findOne({ code: req.params.code }, { subjects: { $elemMatch: { code_subject: req.params.code_subject } } });
     if (!user) {
         return res
             .status(400)
             .json({ msg: "ERROR de consulta" });
     }
-    let result = averageSubject(user.subjects[0].grades);
-    return res.status(201).json({ average: result });
+
+    console.log(user.subjects)
+    let promedio = 0, size = 0;
+    user.subjects.forEach(subject => {
+        subject.grades.forEach(grade => {
+            console.log(grade.grade_value)
+            promedio = promedio + grade.grade_value;
+            size++;
+        });
+    });
+
+    if (size != 0) {
+        promedio = promedio / size;
+    }
+
+    return res.status(201).json({ average: promedio });
 };
 
 export const averageTotal = async (
@@ -54,52 +69,133 @@ export const averageTotal = async (
 
 
 ): Promise<Response> => {
+    console.log("INIT average TOTAL")
 
     if (!req.params.code) {
         return res
             .status(400)
             .json({ msg: "Please. Send full data" });
     }
-    const user = await User.findOne({ code: req.params.code }, { subjects: 1, code: 1 });
+    const user: IUser = await User.findOne({ code: req.params.code }, { subjects: 1, code: 1 });
 
+    let promedio = 0, size = 0;
+    user.subjects.forEach(subject => {
+        subject.grades.forEach(grade => {
+            console.log(grade.grade_value)
+            promedio = promedio + grade.grade_value
+            size++;
+        });
+    });
 
-    let result = avgTotal(user.subjects, user.code);
-    return res.status(201).json({ average: result });
+    if (size != 0) {
+        promedio = promedio / size;
+    }
+
+    return res.status(201).json({ average: promedio });
 };
 
-const avgTotal = async (subjects: string, code: string): Promise<number> => {
-    let data = JSON.stringify(subjects)
-    let dataJson = JSON.parse(data);
-    let average = 0, size = 0;
 
-    await dataJson.forEach(async (element: { code_subject: string; }) => {
 
-        const user = await User.find({ code: code }, { subjects: { $elemMatch: { code_subject: element.code_subject } } });
-        console.log(user)
-        let result = averageSubject(user.subjects[0].grades);
+export const averageTotalPeriod = async (
+    req: Request,
+    res: Response
+): Promise<Response> => {
+    console.log("INIT average PERIOD")
+    const { code, period } = req.params
 
-        average += result;
-        size += 1;
-        if (dataJson.size == size) {
-            console.log("El numero es " + result);
-            return average / size;
+    console.log(code + " " + period)
+    if (!req.params.code) {
+        return res
+            .status(400)
+            .json({ msg: "Please. Send full data NULL" });
+    }
+
+    // const user: IUser[] = await User.find({ code: code, subjects: { $elemMatch: { period: period } } });
+    const user: IUser[] = await User.find({ code: code, "subjects.period": period }, { _id: 0});
+
+    console.log(user[0].subjects)
+
+
+
+    if (!user) {
+        return res
+            .status(400)
+            .json({ msg: "ERROR de consulta no resultados" });
+    }
+
+    let promedio = 0, size = 0;
+
+    user[0].subjects.forEach(subject => {
+        if(subject.period.match(period)){
+            subject.grades.forEach(grade => {
+                console.log(grade.grade_value)
+                promedio += grade.grade_value;
+                size++;
+            });
         }
     });
 
-    console.log("dd" + average)
-    return 0;
-}
+    if (size != 0) {
+        promedio = promedio / size
+    }
+
+    return res.status(201).json({ average: promedio });
+};
+
+
+export const getGradesAverageCourse = async (
+    req: Request,
+    res: Response
+): Promise<Response> => {
+    console.log("Init getGradesAverageCourse")
+
+    if ( !req.params.code_subject) {
+        return res
+            .status(400)
+            .json({ msg: "Please. Send full data for subjects" });
+    }
+    const { code_subject } = req.params;
+
+    const user:IUser[] = await User.find( { subjects: { $elemMatch: { code_subject: code_subject } } });
+
+    if (!user) {
+        return res
+            .status(400)
+            .json({ msg: "ERROR de consulta" });
+    }
+
+    let promedio = 0, size = 0;
+
+    user.forEach(use => {
+        use.subjects.forEach(subject => {
+            if(subject.code_subject.match(code_subject)){
+                subject.grades.forEach(grade => {
+                    console.log(grade.grade_value)
+                    promedio+= grade.grade_value;
+                    size++;
+                });
+            }
+        });
+    });
+    if (size != 0) {
+        promedio = promedio / size
+    }
+
+    return res.status(201).json({ average: promedio });
+};
+
+
 
 export const getGradesSubjectsbyCode = async (
     req: Request,
     res: Response
 ): Promise<Response> => {
-    
+
 
     if (!req.params.code || !req.params.code_subject) {
         return res
             .status(400)
-            .json({ msg: "Please. Send full data" });
+            .json({ msg: "Please. Send full data for subjects" });
     }
     const { code, code_subject } = req.params;
 
@@ -115,20 +211,6 @@ export const getGradesSubjectsbyCode = async (
     return res.status(201).json(user.subjects[0].grades);
 };
 
-const averageSubject = (grades: string): number => {
-    let data = JSON.stringify(grades)
-    let dataJson = JSON.parse(data);
-    let average = 0, size = 0;
-
-    dataJson.forEach((element: { grade_value: number; }) => {
-        average += element.grade_value
-        size += 1;
-    });
-
-    return average / size;
-};
-
-
 
 
 
@@ -139,7 +221,7 @@ export const addSubject = async (
     if (validateRequestSubject(req).match("ERROR")) {
         return res
             .status(400)
-            .json({ msg: "Please. Send full data" });
+            .json({ msg: "Please. Send full data for add data" });
     }
     const user = await User.findOne({ code: req.params.code });
 
@@ -150,33 +232,6 @@ export const addSubject = async (
     return res.status(201).json({ msg: "Materia incluida correctamente" });
 };
 
-export const getAverageByPeriod = async (
-    req: Request,
-    res: Response
-): Promise<Response> => {
-    
-    const {code, period} = req.params;
-
-    if (!req.params.code || !req.params.code_subject) {
-            return res
-                .status(400)
-                .json({ msg: "Please. Send full data" });
-    }
-
-    const user = await User.find({ code: code }, { subjects: { $elemMatch: { period: period } } });
-
-
-    if (!user) {
-        return res
-        .status(400)
-        .json({ msg: "Dato no encontrado" });
-    }
-
-
-
-
-    return res.status(201).json({ msg: "Materia incluida correctamente" });
-};
 
 
 
@@ -194,10 +249,6 @@ const validateRequestSubject = (request: Request): string => {
         return "ERROR";
     return "SUCCESS";
 };
-
-
-
-
 
 const validateRequestGrade = (request: Request): string => {
 
