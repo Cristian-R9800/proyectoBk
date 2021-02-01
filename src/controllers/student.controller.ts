@@ -109,7 +109,7 @@ export const averageTotalList = async (
     }
     const user: IUser = await User.findOne({ code: req.params.code }, { subjects: 1, code: 1 });
 
-    let listaMaterias: { Materia: string; Promedio: number; }[]=[];
+    let listaMaterias: { Materia: string; Promedio: string; }[]=[];
     let name,m;
 
     let promedio = 0, size = 0;
@@ -122,7 +122,8 @@ export const averageTotalList = async (
         if (size != 0) {
             promedio = promedio/size;
         }
-        listaMaterias.push({ "Materia": subject.name, "Promedio": promedio})
+        
+        listaMaterias.push({ "Materia": subject.name, "Promedio": promedio.toFixed(2)})
         promedio = 0
         size = 0
     });
