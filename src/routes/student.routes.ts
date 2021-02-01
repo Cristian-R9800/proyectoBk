@@ -4,6 +4,7 @@ import {
   addSubject,
   averageGrade,
   averageTotal,
+  averageTotalList,
   averageTotalPeriod,
   getGradesAverageCourse,
   getGradesSubjectsbyCode
@@ -18,6 +19,7 @@ router.get('/student/grade/average/:code', averageTotal);
 router.get('/student/grade/:code/:code_subject', getGradesSubjectsbyCode);
 router.get('/student/grade/average/period/:code/:period', averageTotalPeriod);
 router.get('/student/course/grade/:code_subject', getGradesAverageCourse);
+router.get('/student/list/average/grade/:code', averageTotalList);
 
 
 export default router;
