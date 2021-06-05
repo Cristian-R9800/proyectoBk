@@ -94,6 +94,30 @@ export const averageTotal = async (
     return res.status(201).json({ average: promedio });
 };
 
+export const getSubjectsByPeriod = async (
+    req:Request,
+    res:Response
+): Promise<Response> =>{
+    if (!req.params.code || !req.params.period) {
+        return res
+            .status(400)
+            .json({ msg: "Please. Send full data" });
+    }
+    const {code, period} = req.params;
+    console.log(`Code [${code}] period [${period}]`)
+    let subjects:any = []
+
+    const user: IUser = await User.findOne({ code: code },{ subjects: 1});
+    console.log(user)
+    user.subjects.forEach(subject => {
+        if(period == subject.period){
+            subjects.push(subject)
+        }
+    });
+
+    return res.status(200).json(subjects);
+}
+
 export const averageTotalList = async (
     req: Request,
     res: Response
@@ -185,7 +209,46 @@ export const averageTotalPeriod = async (
     return res.status(201).json({ average: promedio });
 };
 
+export const getGradesAverageCourseByPeriod = async (
+    req: Request,
+    res: Response
+): Promise<Response> => {
+    console.log("Init getGradesAverageCoursebyPeriod")
 
+    if (!req.params.period) {
+        return res
+            .status(400)
+            .json({ msg: "Please. Send full data for subjects" });
+    }
+    const { period } = req.params;
+
+    const user: IUser[] = await User.find({ subjects: { $elemMatch: { period: period } } });
+
+    if (!user) {
+        return res
+            .status(400)
+            .json({ msg: "ERROR de consulta" });
+    }
+
+    let promedio = 0, size = 0;
+
+    user.forEach(use => {
+        use.subjects.forEach(subject => {
+            if (subject.period.match(period)) {
+                subject.grades.forEach(grade => {
+                    console.log(grade.grade_value)
+                    promedio += grade.grade_value;
+                    size++;
+                });
+            }
+        });
+    });
+    if (size != 0) {
+        promedio = promedio / size
+    }
+
+    return res.status(201).json({ average: promedio });
+};
 export const getGradesAverageCourse = async (
     req: Request,
     res: Response

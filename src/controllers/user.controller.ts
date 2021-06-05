@@ -10,7 +10,7 @@ import { BlobServiceClient } from '@azure/storage-blob';
 const uuid = require("uuid/v4");
 import azureStorage from 'azure-storage';
 import { AnonymousCredentialPolicy } from "@azure/storage-blob";
-import axios from "axios";
+import axios, { AxiosResponse } from "axios";
 const blobService = azureStorage.createBlobService(config.AZURE_CONECTION_STORAGE_KEY);
 const containerName = 'datasetfaces';
 //import getStream from 'into-stream';
@@ -227,12 +227,8 @@ const checkFaces = async (request: Request): Promise<string> => {
       url: urlImage
     }).then((response) =>{
       const  dato  = response as unknown as string;
-      console.log(dato)
-      const datoJson = JSON.parse(dato)
+      console.log(response)
       
-      
-      
-      console.log(datoJson.data)
     }).catch(err =>{
       console.log(err)
     })
@@ -276,7 +272,7 @@ async function postData(url:string, data:any) {
   });
 
 
-  return response; // parses JSON response into native JavaScript objects
+  return JSON.stringify(response); // parses JSON response into native JavaScript objects
 }
 
 
