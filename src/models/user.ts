@@ -49,7 +49,7 @@ const userSchema = new Schema({
   degree: { type: String, required: true },
   password: { type: String, required: true },
   id_rol: { type: Number, required: true },
-  image_location: {type: String, required: true},
+  image_location: {type: String, required: false},
   location: {
     latitud: Number,
     longitud: Number
