@@ -10,6 +10,7 @@ export interface IUser extends Document {
   email: string;
   password: string;
   id_rol: string;
+  image_location: string;
   location: {
     latitud: number;
     longitud: number;
@@ -48,6 +49,7 @@ const userSchema = new Schema({
   degree: { type: String, required: true },
   password: { type: String, required: true },
   id_rol: { type: Number, required: true },
+  image_location: {type: String, required: true},
   location: {
     latitud: Number,
     longitud: Number

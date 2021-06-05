@@ -7,10 +7,6 @@
     "degree": "Ingenieria de Sistemas",
     "email": "cristian-ramirez1@upc.edu.co",
     "password": "123",
-    "location": {
-        "latitud": "4.6381",
-        "longitud": "-74.19"
-    },
     "Id_rol": "1",
     "subject": [{
         "code_subject": "1",
