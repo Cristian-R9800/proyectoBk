@@ -198,16 +198,16 @@ export const signIn = async (
       .json({ msg: "Please. Send your full location" });
   }
 
-  const credentials = new msRest.ApiKeyCredentials({ inHeader: { 'Ocp-Apim-Subscription-Key': config.KEY_FACE_API } });
-  const client = new Face.FaceClient(credentials, config.ENDPOINT_FACE_API);
+  //const credentials = new msRest.ApiKeyCredentials({ inHeader: { 'Ocp-Apim-Subscription-Key': config.KEY_FACE_API } });
+  //const client = new Face.FaceClient(credentials, config.ENDPOINT_FACE_API);
 
   const stateBlocked: String = await updateLocation(user.code, req.body.latitud, req.body.longitud)
-  const checkFacesResponse = checkFaces(user.image_location)
+  //const checkFacesResponse = checkFaces(user.image_location)
 
 
 
 
-  if (stateBlocked == "BLOCKED" || "OK" == await checkFaces(req)) {
+  if (stateBlocked == "BLOCKED" /*|| "OK" == await checkFaces(req)*/) {
     return res.status(400).json({ msg: "LOGIN BLOCKED" })
   }
   else {
