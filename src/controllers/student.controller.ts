@@ -18,9 +18,26 @@ export const addGrade = async (
             .json({ msg: "Please. Send full data for add grade" });
     }
 
-    const user = await User.findOne({ code: req.params.code }, { subjects: { $elemMatch: { code_subject: req.params.code_subject } } });
+    const user:IUser = await User.findOne({ code: req.params.code }, { subjects: { $elemMatch: { code_subject: req.params.code_subject } } });
+    //const user:IUser = await User.findOneAndUpdate({ code: req.params.code ,  subjects: { $elemMatch: { code_subject: req.params.code_subject } } });
 
-    user.subjects[0].grades.push(req.body);
+    
+    user.subjects.forEach(subject => {
+        let index = 0;
+        subject.grades.forEach(async grade => {
+            if(req.body.name == grade.name){
+                grade = req.body
+                user.subjects[0].grades[index] = grade
+
+                await User.findByIdAndUpdate(grade.id_grade, {subjects: user.subjects})
+
+                return res.status(201).json(user);
+            }    
+            index++;
+        });    
+    });
+    
+    user.subjects[0].grades.push(req.body); 
 
     await user.save();
     return res.status(201).json(user);
@@ -358,13 +375,38 @@ export const addSubject = async (
             .status(400)
             .json({ msg: "Please. Send full data for add data" });
     }
+
+    
+
     const user = await User.findOne({ code: req.params.code });
 
-    user.subjects.push(req.body);
+
+    
+    const users: IUser[] = await User.find({id_rol: "2"});
+
+    let isValidToUpload = true;
+    users.forEach(user => {
+        if(req.params.code != user.code){
+            user.subjects.forEach(subject => {
+                if(subject.name == req.body.name){
+                    isValidToUpload = false;
+                }
+            });
+        }
+    });
+
+    if(isValidToUpload){
+        user.subjects.push(req.body);
+        await user.save();
+        console.log("Materia incluida correctamente")
+        return res.status(200).json({ msg: "Materia incluida correctamente" });
+    }
+    else{
+        console.log("Materia NO incluida")
+        return res.status(400).json({ msg: "Materia ya asignada previamente" });
+    }
 
 
-    await user.save();
-    return res.status(201).json({ msg: "Materia incluida correctamente" });
 };
 
 
