@@ -118,6 +118,35 @@ export const getSubjectsByPeriod = async (
     return res.status(200).json(subjects);
 }
 
+export const getGradeBySubjectAndCode = async (
+    req:Request,
+    res:Response
+): Promise<Response> =>{
+    if (!req.params.code) {
+        return res
+            .status(400)
+            .json({ msg: "Please. Send full data for getGradeBySubjectAndCode" });
+    }
+    const {code, code_subject, grade_name} = req.params;
+    console.log(`Code [${code}] period [${code_subject}]`)
+
+    const user: IUser = await User.findOne({ code: code });
+    console.log(`${code_subject}`)
+    
+    user.subjects.forEach(subject => {
+        if(code_subject == subject.code_subject){
+
+            subject.grades.forEach(grade => {
+                if(grade.name == grade_name){
+                    return res.status(200).json({grade: grade.grade_value});
+                }
+            });
+        }
+    });
+
+    return res.status(200).json({grade: "NOT VALUE"});
+}
+
 export const averageTotalList = async (
     req: Request,
     res: Response
